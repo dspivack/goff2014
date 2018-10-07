@@ -1,6 +1,6 @@
 ---
-title: "Replication of Study X by Sample & Sample (200x, Psychological Science)"
-author: "Replication Author[s] (contact information)"
+title: "Replication of The Essence of Innocenece: Consequences of Dehumanizing Black Children by Phillip Atibs Goff et. al. (2014, Journal of Personality and Social Psychology)"
+author: "Phillip Atibs Goff et. al. (goff@policingequity.org)"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
   html_document:
