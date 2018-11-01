@@ -1,0 +1,122 @@
+---
+title: "The Essence of Innocence: Consequences of Dehumanizing Black Children (2014, Journal of Personality and Social Psychology)"
+author: "Phillip Atiba Goff"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+---
+
+<!-- Replication reports should all use this template to standardize reporting across projects.  These reports will be public supplementary materials that accompany the summary report(s) of the aggregate results. -->
+
+##Introduction
+
+In this paper, Gott et. al. test whether black children enjoy fewer of the basic human protections afforded to their non-black peers. In study 1, the authors simply asked participants about the innocence of children. Participants answered questions about how innocent children were in general (i.e., with-out specifying race) and how innocent White and Black children were.  
+
+##Methods
+
+
+###Power Analysis
+
+Original effect size, power analysis for samples to achieve 80%, 90%, 95% power to detect that effect size.  Considerations of feasibility for selecting planned sample size.
+
+###Planned Sample
+
+"One hundred twenty-three students from a large public university participated in this study in exchange for course credit. Ninety-six percent (128) were female. The median age of participants was 19. When asked to report racial demographics, 111 responded 'White,' four responded 'Black,' and eight responded 'other.'" This replication, however uses MTurk. 
+
+###Materials
+
+"We constructed a scale to measure inno- cence after pretesting revealed seven characteristics that were highly associated with innocence in our subject population. Each characteristic was presented as an item in our seven-item scale,including “How much do ___ (e.g., 10- to 13-year olds) need protection?”; “How much do ___ need care?”; “How well can ___ care for themselves?” (reverse coded); “How much are ___ a danger to others?” (reverse coded); “How much are ___ a danger to themselves?” (reverse coded); “How cute are ___?”; and “How innocent are ___?”
+Participants were prompted to respond to the set of seven questions for each of the six age subgroups within their assigned race. For example, a participant assigned to rate Black children was asked, “How much do Black 0- to 4-year-olds need protec- tion?” Alternatively, a participant assigned to the race neutral condition was asked, “How much do 0- to 4-year-olds need pro- tection?” The six age subgroups were presented in one of four randomized orders. Further, the administration of these four orders was counterbalanced across conditions. The innocence scale was acceptably reliable (.65)."
+
+###Procedure	
+
+"Participants were randomly assigned to one of three between-subjects conditions. They were asked to report the perceived innocence of White children, Black children, or children generally (i.e., without race specified). To avoid ceiling effects, where the youngest children (i.e., newborns and toddlers) might invariably be seen as innocent, each survey asked participants to rate individuals within six age subgroups, ranging from birth to young adulthood: 0–4, 5–9, 10–13, 14–17, 18–21, and 22–25. Ratings of innocence were measured with a novel scale and served as the dependent variable. Participants completed the seven-item innocence scale for each of the six age categories within their assigned racial group (White, Black, or race not specified)."
+
+*See link for https://stanforduniversity.qualtrics.com/jfe/form/SV_3OAAprO9LWTFg1f*
+###Analysis Plan
+
+"Analyses compared the perceived innocence of children of different races for each age group and aggregated across age ranges. We compared the overall ratings of innocence between races by conducting independent samples t tests on the average score for each participant (using a Bonferroni correction for all t tests) meaning their general ratings of all target age ranges."  
+
+**Overall innocence ratings are compared between races by conducting independant t tests on the average score for each participant**
+
+###Differences from Original Study
+
+This replication will use MTurk paricipants instead of university students. I do not expect this will have a large effect on the results. 
+
+### Methods Addendum (Post Data Collection)
+
+You can comment this section out prior to final report with data collection.
+
+#### Actual Sample
+  Sample size, demographics, data exclusions based on rules spelled out in analysis plan
+
+#### Differences from pre-data collection methods plan
+  Any differences from what was described as the original plan, or “none”.
+
+
+##Results
+
+
+### Data preparation
+
+Data preparation following the analysis plan.
+	
+```{r include=F}
+###Data Preparation
+
+#I will be getting Likert scale ratings from each participant in one of three conditions: Nuetral, Black, or White. I will convert the data from wide form to long form. Then I will reverse code the following 4 question groups across conditions: “How well can ___ care for themselves?”; “How much are ___ a danger to others?”; “How much are ___ a danger to themselves?”  
+####Load Relevant Libraries and Functions
+
+library(tidyverse)
+
+####Import data
+
+GoffData = read_csv("Goff Replication - Test 1.csv")
+
+#### Data exclusion / filtering
+
+
+#### Prepare data for analysis - create columns etc.
+
+FinalGoff = GoffData %>%
+  gather(QuestionNumber, Response, 2:127) %>%
+  mutate(QuestionType = str_extract(QuestionNumber, "protection|need care|care for themselves|danger to others|danger to themselves|cute|innocent")) %>% 
+  mutate(Condition = str_extract(QuestionNumber, "Black|White")) %>% 
+  mutate(Age = str_extract(QuestionNumber, "0-4|5-9|10-13|14-17|18-21|22-25")) %>%
+  na.omit(GoffData)
+  
+#I need to figure out how to reverse code 4 of the questions and take out the NAs 
+```
+
+### Confirmatory analysis
+
+"Analyses compared the perceived innocence of children of different races for each age group and aggregated across age ranges. We compared the overall ratings of innocence between races by conducting independent samples t tests on the average score for each participant (using a Bonferroni correction for all t tests) meaning their general ratings of all target age ranges."  
+
+```{r}
+
+GoffAgeMean = FinalGoff %>%
+   summarise(Agemean = (mean(Response)))
+
+  
+```
+
+
+*Side-by-side graph with original graph is ideal here*
+
+###Exploratory analyses
+
+Any follow-up analyses desired (not required).  
+
+## Discussion
+
+### Summary of Replication Attempt
+
+Open the discussion section with a paragraph summarizing the primary result from the confirmatory analysis and the assessment of whether it replicated, partially replicated, or failed to replicate the original result.  
+
+### Commentary
+
+Add open-ended commentary (if any) reflecting (a) insights from follow-up exploratory analysis, (b) assessment of the meaning of the replication (or not) - e.g., for a failure to replicate, are the differences between original and present study ones that definitely, plausibly, or are unlikely to have been moderators of the result, and (c) discussion of any objections or challenges raised by the current and original authors about the replication attempt.  None of these need to be long.
