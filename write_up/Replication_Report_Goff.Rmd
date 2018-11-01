@@ -72,24 +72,35 @@ Data preparation following the analysis plan.
 ####Load Relevant Libraries and Functions
 
 library(tidyverse)
+library(ggthemes)
 
 ####Import data
 
-GoffData = read_csv("Goff Replication - Test 1.csv")
+GoffData = read_csv("../data/Goff Replication - Test 1.csv")
 
 #### Data exclusion / filtering
 
 
 #### Prepare data for analysis - create columns etc.
+qns_to_rev_code = c("care for themselves","danger to other", "danger to themselves")
+
 
 FinalGoff = GoffData %>%
   gather(QuestionNumber, Response, 2:127) %>%
   mutate(QuestionType = str_extract(QuestionNumber, "protection|need care|care for themselves|danger to others|danger to themselves|cute|innocent")) %>% 
   mutate(Condition = str_extract(QuestionNumber, "Black|White")) %>% 
   mutate(Age = str_extract(QuestionNumber, "0-4|5-9|10-13|14-17|18-21|22-25")) %>%
-  na.omit(GoffData)
-  
-#I need to figure out how to reverse code 4 of the questions and take out the NAs 
+   na.omit() %>%
+  mutate(Response = gsub(";", "", Response)) %>%
+  mutate(Response = as.numeric(Response)) %>%
+   mutate(Response = ifelse(
+     # is the question type in the reverse code list?
+     QuestionType %in% qns_to_rev_code,
+     # if so, reverse code
+     8-Response,
+     # otherwise, keep it the same
+     Response))
+ 
 ```
 
 ### Confirmatory analysis
@@ -98,12 +109,44 @@ FinalGoff = GoffData %>%
 
 ```{r}
 
-GoffAgeMean = FinalGoff %>%
+SubIDGoffAgeMean = FinalGoff %>%
+  group_by(SubID, Condition, Age) %>%
    summarise(Agemean = (mean(Response)))
+#this gives us the means by participant 
 
-  
+# # get sample means
+# GoffAgeMean = SubIDGoffAgeMean %>%
+#   group_by(Condition, Age) %>%
+#    summarise(Agemean = (mean(Agemean)))
+
+SubIDGoffAgeMean %>%
+  ggplot(aes(x = Age, y = Agemean, fill = Condition)) + 
+  stat_summary(fun.y = mean, geom = "bar", position = "dodge") +
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar",
+               position = position_dodge(1), width = 0) +
+  theme_few() +
+  # scale_fill_brewer(type="qual", palette = 3)
+  scale_fill_grey()
+
+#there are 7 t.test one for each age group. Aggregate first. 
+#each t test compares exactly two groups. a main t.test compares the two conditions, black and white
+# use the formula argument for the t. test 
+# forumala is lh to rh where lh is the value and rh is the groups. 
+# the agemean that participants give depends on which condition they give 
+
+corrected_alpha = .05/7
+t.test(Agemean ~ Condition, 
+       data = SubIDGoffAgeMean)   
+
+SubIDGoffAgeMean %>%
+  filter(Age == "0-4") %>%
+  t.test(Agemean ~ Condition, 
+       data = .)  
+
+#GoffAgeMean t.tests(Agemean)
 ```
 
+We want to check whether each p-value is less than `r corrected_alpha`.
 
 *Side-by-side graph with original graph is ideal here*
 
