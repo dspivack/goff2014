@@ -135,15 +135,46 @@ SubIDGoffAgeMean %>%
 # the agemean that participants give depends on which condition they give 
 
 corrected_alpha = .05/7
+
+#Aggregate t.test
 t.test(Agemean ~ Condition, 
        data = SubIDGoffAgeMean)   
 
+#0-4 t.test
 SubIDGoffAgeMean %>%
   filter(Age == "0-4") %>%
   t.test(Agemean ~ Condition, 
        data = .)  
 
-#GoffAgeMean t.tests(Agemean)
+#5-9 t.test
+SubIDGoffAgeMean %>%
+  filter(Age == "5-9") %>%
+  t.test(Agemean ~ Condition, 
+       data = .) 
+
+#10-13 t.test
+SubIDGoffAgeMean %>%
+  filter(Age == "10-13") %>%
+  t.test(Agemean ~ Condition, 
+       data = .) 
+
+#"14-17" t.test
+SubIDGoffAgeMean %>%
+  filter(Age == "14-17") %>%
+  t.test(Agemean ~ Condition, 
+       data = .)
+
+#18-21 t.test
+SubIDGoffAgeMean %>%
+  filter(Age == "18-21") %>%
+  t.test(Agemean ~ Condition, 
+       data = .)
+
+#22-25 t.test
+SubIDGoffAgeMean %>%
+  filter(Age == "22-25") %>%
+  t.test(Agemean ~ Condition, 
+       data = .)
 ```
 
 We want to check whether each p-value is less than `r corrected_alpha`.
