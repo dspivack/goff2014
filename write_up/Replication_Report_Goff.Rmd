@@ -37,6 +37,7 @@ Participants were prompted to respond to the set of seven questions for each of 
 "Participants were randomly assigned to one of three between-subjects conditions. They were asked to report the perceived innocence of White children, Black children, or children generally (i.e., without race specified). To avoid ceiling effects, where the youngest children (i.e., newborns and toddlers) might invariably be seen as innocent, each survey asked participants to rate individuals within six age subgroups, ranging from birth to young adulthood: 0–4, 5–9, 10–13, 14–17, 18–21, and 22–25. Ratings of innocence were measured with a novel scale and served as the dependent variable. Participants completed the seven-item innocence scale for each of the six age categories within their assigned racial group (White, Black, or race not specified)."
 
 *See link for https://stanforduniversity.qualtrics.com/jfe/form/SV_3OAAprO9LWTFg1f*
+
 ###Analysis Plan
 
 "Analyses compared the perceived innocence of children of different races for each age group and aggregated across age ranges. We compared the overall ratings of innocence between races by conducting independent samples t tests on the average score for each participant (using a Bonferroni correction for all t tests) meaning their general ratings of all target age ranges."  
@@ -55,7 +56,7 @@ You can comment this section out prior to final report with data collection.
   Sample size, demographics, data exclusions based on rules spelled out in analysis plan
 
 #### Differences from pre-data collection methods plan
-  Any differences from what was described as the original plan, or “none”.
+Any differences from what was described as the original plan, or “none”.
 
 
 ##Results
@@ -65,25 +66,30 @@ You can comment this section out prior to final report with data collection.
 
 Data preparation following the analysis plan.
 	
-```{r include=F}
 ###Data Preparation
 
-#I will be getting Likert scale ratings from each participant in one of three conditions: Nuetral, Black, or White. I will convert the data from wide form to long form. Then I will reverse code the following 4 question groups across conditions: “How well can ___ care for themselves?”; “How much are ___ a danger to others?”; “How much are ___ a danger to themselves?”  
+I will be getting Likert scale ratings from each participant in one of three conditions: Nuetral, Black, or White. I will convert the data from wide form to long form. Then I will reverse code the following 4 question groups across conditions: “How well can ___ care for themselves?”; “How much are ___ a danger to others?”; “How much are ___ a danger to themselves?”  
+
 ####Load Relevant Libraries and Functions
 
+```{r include=F}
 library(tidyverse)
 library(ggthemes)
+```
 
 ####Import data
 
+```{r}
 GoffData = read_csv("../data/Goff Replication - Test 1.csv")
+```
 
 #### Data exclusion / filtering
 
 
 #### Prepare data for analysis - create columns etc.
-qns_to_rev_code = c("care for themselves","danger to other", "danger to themselves")
 
+```{r}
+qns_to_rev_code = c("care for themselves","danger to other", "danger to themselves")
 
 FinalGoff = GoffData %>%
   gather(QuestionNumber, Response, 2:127) %>%
@@ -108,33 +114,59 @@ FinalGoff = GoffData %>%
 "Analyses compared the perceived innocence of children of different races for each age group and aggregated across age ranges. We compared the overall ratings of innocence between races by conducting independent samples t tests on the average score for each participant (using a Bonferroni correction for all t tests) meaning their general ratings of all target age ranges."  
 
 ```{r}
-
+# This gives us the means by participant 
 SubIDGoffAgeMean = FinalGoff %>%
+  # First we want 6*N numbers, 6 per participant
+  # If it's the individual, we don't need to group by
+  # condition, because this is a between Ss design.
+  # But we could, it wouldn't hurt.
   group_by(SubID, Condition, Age) %>%
-   summarise(Agemean = (mean(Response)))
-#this gives us the means by participant 
+  # What we want is the mean response.
+  summarise(Agemean = (mean(Response)))
 
-# # get sample means
+# # Get sample means (commented out, we don't need this)
+# # In the end, we want 12 numbers
+# # For each condition, for each age range, we want one
+# # number that represents what particpants tend to 
+# # answer (regardless of question type)
 # GoffAgeMean = SubIDGoffAgeMean %>%
 #   group_by(Condition, Age) %>%
 #    summarise(Agemean = (mean(Agemean)))
 
+# Plot
 SubIDGoffAgeMean %>%
   ggplot(aes(x = Age, y = Agemean, fill = Condition)) + 
   stat_summary(fun.y = mean, geom = "bar", position = "dodge") +
   stat_summary(fun.data = mean_cl_boot, geom = "errorbar",
+               # This tells ggplot to separate the errorbars by one unit.
+               # We don't need to do this for the bars because the bars have
+               # nonzero width.
                position = position_dodge(1), width = 0) +
   theme_few() +
   # scale_fill_brewer(type="qual", palette = 3)
   scale_fill_grey()
 
-#there are 7 t.test one for each age group. Aggregate first. 
-#each t test compares exactly two groups. a main t.test compares the two conditions, black and white
-# use the formula argument for the t. test 
-# forumala is lh to rh where lh is the value and rh is the groups. 
-# the agemean that participants give depends on which condition they give 
+# There are 7 t-test one for each age group.
+# Each t test compares exactly two sets of numbers.
 
+# Bonferroni Correction
+# there are 7 hypotheses (6 age groups and the aggregate)
+# so instead of using a p-value threshold of alpha = 0.05,
+# we will instead use a threshold of (alpha / m) = (0.05 / 7)
 corrected_alpha = .05/7
+
+# Aggregate first.
+# this main t.test compares the two conditions, black and white
+# use the formula argument for the t-test 
+# lhs ~ rhs
+# forumala is lh to rh where lh is the value and rh is the groups.
+# that is, lhs is the values (the numbers) --> Agemean
+# and rhs is the groups that give us the two sets of numbers --> Condition 
+# So the formula "Agemean ~ Condition" means that "the agemean that
+# participants give *depends* on which condition they are in
+# This articulates the hypothesis that we're testing.
+# Apparently, the first argument has to be the formula
+# and you don't actually type in "formula = " :(
 t.test(Agemean ~ Condition, 
        data = SubIDGoffAgeMean)   
 
