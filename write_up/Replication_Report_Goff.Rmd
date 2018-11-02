@@ -155,27 +155,45 @@ SubIDGoffAgeMean %>%
 # we will instead use a threshold of (alpha / m) = (0.05 / 7)
 corrected_alpha = .05/7
 
-# Aggregate first.
-# this main t.test compares the two conditions, black and white
-# use the formula argument for the t-test 
-# lhs ~ rhs
-# forumala is lh to rh where lh is the value and rh is the groups.
-# that is, lhs is the values (the numbers) --> Agemean
-# and rhs is the groups that give us the two sets of numbers --> Condition 
-# So the formula "Agemean ~ Condition" means that "the agemean that
-# participants give *depends* on which condition they are in
-# This articulates the hypothesis that we're testing.
-# Apparently, the first argument has to be the formula
-# and you don't actually type in "formula = " :(
+#Aggregate t.test
 t.test(Agemean ~ Condition, 
        data = SubIDGoffAgeMean)   
 
+#0-4 t.test
 SubIDGoffAgeMean %>%
   filter(Age == "0-4") %>%
   t.test(Agemean ~ Condition, 
        data = .)  
 
-#GoffAgeMean t.tests(Agemean)
+#5-9 t.test
+SubIDGoffAgeMean %>%
+  filter(Age == "5-9") %>%
+  t.test(Agemean ~ Condition, 
+       data = .) 
+
+#10-13 t.test
+SubIDGoffAgeMean %>%
+  filter(Age == "10-13") %>%
+  t.test(Agemean ~ Condition, 
+       data = .) 
+
+#"14-17" t.test
+SubIDGoffAgeMean %>%
+  filter(Age == "14-17") %>%
+  t.test(Agemean ~ Condition, 
+       data = .)
+
+#18-21 t.test
+SubIDGoffAgeMean %>%
+  filter(Age == "18-21") %>%
+  t.test(Agemean ~ Condition, 
+       data = .)
+
+#22-25 t.test
+SubIDGoffAgeMean %>%
+  filter(Age == "22-25") %>%
+  t.test(Agemean ~ Condition, 
+       data = .)
 ```
 
 We want to check whether each p-value is less than `r corrected_alpha`.
