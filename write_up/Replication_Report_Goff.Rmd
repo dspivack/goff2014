@@ -80,7 +80,7 @@ library(ggthemes)
 ####Import data
 
 ```{r}
-GoffData = read_csv("../data/Goff Replication - Test 1.csv")
+GoffData = read.csv("../data/Goff Replication - Test 1.csv")
 ```
 
 #### Data exclusion / filtering
@@ -92,12 +92,13 @@ GoffData = read_csv("../data/Goff Replication - Test 1.csv")
 qns_to_rev_code = c("care for themselves","danger to other", "danger to themselves")
 
 FinalGoff = GoffData %>%
-  gather(QuestionNumber, Response, 2:127) %>%
-  mutate(QuestionType = str_extract(QuestionNumber, "protection|need care|care for themselves|danger to others|danger to themselves|cute|innocent")) %>% 
-  mutate(Condition = str_extract(QuestionNumber, "Black|White")) %>% 
-  mutate(Age = str_extract(QuestionNumber, "0-4|5-9|10-13|14-17|18-21|22-25")) %>%
+  gather(Question, Response, 3:86) %>%
+   filter(Duration > 200) %>% #filters out participants who spent less than 200 seconds on the task 
+  mutate(QuestionType = str_extract(Question, "protection|need care|care for themselves|danger to others|danger to themselves|cute|innocent")) %>% 
+  mutate(Condition = str_extract(Question, "Black|White")) %>% 
+  mutate(Age = str_extract(Question, "0-4|5-9|10-13|14-17|18-21|22-25")) %>%
    na.omit() %>%
-  mutate(Response = gsub(";", "", Response)) %>%
+  #mutate(Response = gsub(";", "", Response)) %>%
   mutate(Response = as.numeric(Response)) %>%
    mutate(Response = ifelse(
      # is the question type in the reverse code list?
