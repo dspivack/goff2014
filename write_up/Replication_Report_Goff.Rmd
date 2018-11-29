@@ -14,7 +14,7 @@ output:
 
 ##Introduction
 
-In this paper, Gott et. al. test whether black children enjoy fewer of the basic human protections afforded to their non-black peers. In study 1, the authors simply asked participants about the innocence of children. Participants answered questions about how innocent children were in general (i.e., with-out specifying race) and how innocent White and Black children were.  
+In this paper, Gott et. al. test whether black children enjoy fewer of the basic human protections afforded to their non-black peers. In study 1, the authors asked participants about the innocence of children. Participants answered questions about how innocent children were in general (i.e., with-out specifying race) and how innocent White and Black children were.  
 
 ##Methods
 
@@ -25,7 +25,9 @@ Original effect size, power analysis for samples to achieve 80%, 90%, 95% power 
 
 ###Planned Sample
 
-"One hundred twenty-three students from a large public university participated in this study in exchange for course credit. Ninety-six percent (128) were female. The median age of participants was 19. When asked to report racial demographics, 111 responded 'White,' four responded 'Black,' and eight responded 'other.'" This replication, however uses MTurk. 
+"One hundred twenty-three students from a large public university participated in this study in exchange for course credit. Ninety-six percent (128) were female. The median age of participants was 19. When asked to report racial demographics, 111 responded 'White,' four responded 'Black,' and eight responded 'other.'" 
+
+This replication, however uses MTurk. It is also only testing two of the conditions, white and black.  
 
 ###Materials
 
@@ -36,7 +38,7 @@ Participants were prompted to respond to the set of seven questions for each of 
 
 "Participants were randomly assigned to one of three between-subjects conditions. They were asked to report the perceived innocence of White children, Black children, or children generally (i.e., without race specified). To avoid ceiling effects, where the youngest children (i.e., newborns and toddlers) might invariably be seen as innocent, each survey asked participants to rate individuals within six age subgroups, ranging from birth to young adulthood: 0–4, 5–9, 10–13, 14–17, 18–21, and 22–25. Ratings of innocence were measured with a novel scale and served as the dependent variable. Participants completed the seven-item innocence scale for each of the six age categories within their assigned racial group (White, Black, or race not specified)."
 
-*See link for https://stanforduniversity.qualtrics.com/jfe/form/SV_3OAAprO9LWTFg1f*
+*See link for https://stanforduniversity.qualtrics.com/jfe/form/SV_doFDaWWu5KH8hal*
 
 ###Analysis Plan
 
@@ -46,7 +48,7 @@ Participants were prompted to respond to the set of seven questions for each of 
 
 ###Differences from Original Study
 
-This replication will use MTurk paricipants instead of university students. I do not expect this will have a large effect on the results. 
+This replication will use MTurk paricipants instead of university students. I am unsure as to whether this will have a large effect on the results. Additionally, I am only comparing the black and white conditions, and have omitted the neutral condition. 
 
 ### Methods Addendum (Post Data Collection)
 
@@ -68,7 +70,7 @@ Data preparation following the analysis plan.
 	
 ###Data Preparation
 
-I will be getting Likert scale ratings from each participant in one of three conditions: Nuetral, Black, or White. I will convert the data from wide form to long form. Then I will reverse code the following 4 question groups across conditions: “How well can ___ care for themselves?”; “How much are ___ a danger to others?”; “How much are ___ a danger to themselves?”  
+I will be getting Likert scale ratings from 1-7 from each participant in one of two conditions:  Black or White. I will convert the data from wide form to long form and organize by question type, condition, and age group. Then I will reverse code the following 4 question groups across conditions: “How well can ___ care for themselves?”; “How much are ___ a danger to others?”; “How much are ___ a danger to themselves?”  
 
 ####Load Relevant Libraries and Functions
 
@@ -80,7 +82,7 @@ library(ggthemes)
 ####Import data
 
 ```{r}
-GoffData = read.csv("../data/Goff Replication - Test 1.csv")
+GoffData = read.csv("../data/Pilot B Data_Edit .csv")
 ```
 
 #### Data exclusion / filtering
@@ -94,11 +96,10 @@ qns_to_rev_code = c("care for themselves","danger to other", "danger to themselv
 FinalGoff = GoffData %>%
   gather(Question, Response, 3:86) %>%
    filter(Duration > 200) %>% #filters out participants who spent less than 200 seconds on the task 
-  mutate(QuestionType = str_extract(Question, "protection|need care|care for themselves|danger to others|danger to themselves|cute|innocent")) %>% 
+  mutate(QuestionType = str_extract(Question, "protection|need.care|care.for.themselves|danger.to.others|danger.to.themselves|cute|innocent")) %>% 
   mutate(Condition = str_extract(Question, "Black|White")) %>% 
-  mutate(Age = str_extract(Question, "0-4|5-9|10-13|14-17|18-21|22-25")) %>%
+  mutate(Age = str_extract(Question, "0.4|5.9|10.13|14.17|18.21|22.25")) %>%
    na.omit() %>%
-  #mutate(Response = gsub(";", "", Response)) %>%
   mutate(Response = as.numeric(Response)) %>%
    mutate(Response = ifelse(
      # is the question type in the reverse code list?
@@ -162,13 +163,13 @@ t.test(Agemean ~ Condition,
 
 #0-4 t.test
 SubIDGoffAgeMean %>%
-  filter(Age == "0-4") %>%
+  filter(Age == "0.4") %>%
   t.test(Agemean ~ Condition, 
        data = .)  
 
 #5-9 t.test
 SubIDGoffAgeMean %>%
-  filter(Age == "5-9") %>%
+  filter(Age == "5.9") %>%
   t.test(Agemean ~ Condition, 
        data = .) 
 
@@ -180,19 +181,19 @@ SubIDGoffAgeMean %>%
 
 #"14-17" t.test
 SubIDGoffAgeMean %>%
-  filter(Age == "14-17") %>%
+  filter(Age == "14.17") %>%
   t.test(Agemean ~ Condition, 
        data = .)
 
 #18-21 t.test
 SubIDGoffAgeMean %>%
-  filter(Age == "18-21") %>%
+  filter(Age == "18.21") %>%
   t.test(Agemean ~ Condition, 
        data = .)
 
 #22-25 t.test
 SubIDGoffAgeMean %>%
-  filter(Age == "22-25") %>%
+  filter(Age == "22.25") %>%
   t.test(Agemean ~ Condition, 
        data = .)
 ```
