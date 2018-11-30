@@ -21,13 +21,15 @@ In this paper, Gott et. al. test whether black children enjoy fewer of the basic
 
 ###Power Analysis
 
-Original effect size, power analysis for samples to achieve 80%, 90%, 95% power to detect that effect size.  Considerations of feasibility for selecting planned sample size.
+The original effect size was 0.727. Power to achieve 80% power is 50 participants (25 for each condition). Power to achieve 90% power is 68 participants (34 for each condition). Power to achieve 95% power is 84 participants (42 in each condition).   
+
+This replication will use 50 participants to achieve 80% power. 
 
 ###Planned Sample
 
 "One hundred twenty-three students from a large public university participated in this study in exchange for course credit. Ninety-six percent (128) were female. The median age of participants was 19. When asked to report racial demographics, 111 responded 'White,' four responded 'Black,' and eight responded 'other.'" 
 
-This replication, however uses MTurk. It is also only testing two of the conditions, white and black.  
+This replication, differs in that it uses MTurk participants. It is also only testing two of the conditions, white and black.  
 
 ###Materials
 
@@ -48,18 +50,16 @@ Participants were prompted to respond to the set of seven questions for each of 
 
 ###Differences from Original Study
 
-This replication will use MTurk paricipants instead of university students. I am unsure as to whether this will have a large effect on the results. Additionally, I am only comparing the black and white conditions, and have omitted the neutral condition. 
+This replication will use MTurk paricipants instead of university students. I am unsure as to whether this will have a large effect on the results. Additionally, I am only comparing the black and white conditions, and have omitted the neutral condition. Lastly, we did not  power the analysis to correct for multiple comparisons. If the aggregate is not significant we will consider the main effect to not have replicated. 
 
 ### Methods Addendum (Post Data Collection)
 
 You can comment this section out prior to final report with data collection.
 
 #### Actual Sample
-  Sample size, demographics, data exclusions based on rules spelled out in analysis plan
+  The sample will be 50 MTurk particpants who are from the USA and have over an 80% approval rating. 
 
 #### Differences from pre-data collection methods plan
-Any differences from what was described as the original plan, or “none”.
-
 
 ##Results
 
@@ -155,7 +155,7 @@ SubIDGoffAgeMean %>%
 # there are 7 hypotheses (6 age groups and the aggregate)
 # so instead of using a p-value threshold of alpha = 0.05,
 # we will instead use a threshold of (alpha / m) = (0.05 / 7)
-corrected_alpha = .05/7
+corrected_alpha = .05/6
 
 #Aggregate t.test
 t.test(Agemean ~ Condition, 
