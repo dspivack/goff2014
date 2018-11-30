@@ -175,7 +175,7 @@ SubIDGoffAgeMean %>%
 
 #10-13 t.test
 SubIDGoffAgeMean %>%
-  filter(Age == "10-13") %>%
+  filter(Age == "10.13") %>%
   t.test(Agemean ~ Condition, 
        data = .) 
 
