@@ -29,35 +29,38 @@ This replication will use 50 participants to achieve 80% power.
 
 "One hundred twenty-three students from a large public university participated in this study in exchange for course credit. Ninety-six percent (128) were female. The median age of participants was 19. When asked to report racial demographics, 111 responded 'White,' four responded 'Black,' and eight responded 'other.'" 
 
-This replication, differs in that it uses MTurk participants. It is also only testing two of the conditions, white and black.  
+This replication, differs in that it uses MTurk participants.   
 
 ###Materials
 
-"We constructed a scale to measure inno- cence after pretesting revealed seven characteristics that were highly associated with innocence in our subject population. Each characteristic was presented as an item in our seven-item scale,including “How much do ___ (e.g., 10- to 13-year olds) need protection?”; “How much do ___ need care?”; “How well can ___ care for themselves?” (reverse coded); “How much are ___ a danger to others?” (reverse coded); “How much are ___ a danger to themselves?” (reverse coded); “How cute are ___?”; and “How innocent are ___?”
-Participants were prompted to respond to the set of seven questions for each of the six age subgroups within their assigned race. For example, a participant assigned to rate Black children was asked, “How much do Black 0- to 4-year-olds need protec- tion?” Alternatively, a participant assigned to the race neutral condition was asked, “How much do 0- to 4-year-olds need pro- tection?” The six age subgroups were presented in one of four randomized orders. Further, the administration of these four orders was counterbalanced across conditions. The innocence scale was acceptably reliable (.65)."
+"We constructed a scale to measure innocence after pretesting revealed seven characteristics that were highly associated with innocence in our subject population. Each characteristic was presented as an item in our seven-item scale,including “How much do ___ (e.g., 10- to 13-year olds) need protection?”; “How much do ___ need care?”; “How well can ___ care for themselves?” (reverse coded); “How much are ___ a danger to others?” (reverse coded); “How much are ___ a danger to themselves?” (reverse coded); “How cute are ___?”; and “How innocent are ___?”
+Participants were prompted to respond to the set of seven questions for each of the six age subgroups within their assigned race. For example, a participant assigned to rate Black children was asked, “How much do Black 0- to 4-year-olds need protection?” Alternatively, a participant assigned to the race neutral condition was asked, “How much do 0- to 4-year-olds need protection?” The six age subgroups were presented in one of four randomized orders. Further, the administration of these four orders was counterbalanced across conditions. The innocence scale was acceptably reliable (.65)."
 
 ###Procedure	
 
 "Participants were randomly assigned to one of three between-subjects conditions. They were asked to report the perceived innocence of White children, Black children, or children generally (i.e., without race specified). To avoid ceiling effects, where the youngest children (i.e., newborns and toddlers) might invariably be seen as innocent, each survey asked participants to rate individuals within six age subgroups, ranging from birth to young adulthood: 0–4, 5–9, 10–13, 14–17, 18–21, and 22–25. Ratings of innocence were measured with a novel scale and served as the dependent variable. Participants completed the seven-item innocence scale for each of the six age categories within their assigned racial group (White, Black, or race not specified)."
 
+Unlike the original study, this replication omits the race neutral category. 
 *See link for https://stanforduniversity.qualtrics.com/jfe/form/SV_doFDaWWu5KH8hal*
 
 ###Analysis Plan
 
 "Analyses compared the perceived innocence of children of different races for each age group and aggregated across age ranges. We compared the overall ratings of innocence between races by conducting independent samples t tests on the average score for each participant (using a Bonferroni correction for all t tests) meaning their general ratings of all target age ranges."  
 
+We did not power the analysis to correct for multiple comparisons. If the aggregate is not significant we will consider the main effect to not have replicated. 
+
 **Overall innocence ratings are compared between races by conducting independant t tests on the average score for each participant**
 
 ###Differences from Original Study
 
-This replication will use MTurk paricipants instead of university students. I am unsure as to whether this will have a large effect on the results. Additionally, I am only comparing the black and white conditions, and have omitted the neutral condition. Lastly, we did not  power the analysis to correct for multiple comparisons. If the aggregate is not significant we will consider the main effect to not have replicated. 
+This replication will use MTurk participants instead of university students. We are unsure as to whether this will have a large effect on the results. While the original study did not include exclusion criteria, we think it prudent to do so here as we are using MTurk participants instead of university students, and thus excluded participants who completed the study in under 200 seconds. Additionally, we are only comparing the black and white conditions, and have omitted the neutral condition. Lastly, we did not power the analysis to correct for multiple comparisons. If the aggregate is not significant we will consider the main effect to not have replicated. 
 
 ### Methods Addendum (Post Data Collection)
 
 You can comment this section out prior to final report with data collection.
 
 #### Actual Sample
-  The sample will be 50 MTurk particpants who are from the USA and have over an 80% approval rating. 
+  The sample will be 50 MTurk participants who are from the USA and have over an 80% approval rating. 
 
 #### Differences from pre-data collection methods plan
 
@@ -70,7 +73,7 @@ Data preparation following the analysis plan.
 	
 ###Data Preparation
 
-I will be getting Likert scale ratings from 1-7 from each participant in one of two conditions:  Black or White. I will convert the data from wide form to long form and organize by question type, condition, and age group. Then I will reverse code the following 4 question groups across conditions: “How well can ___ care for themselves?”; “How much are ___ a danger to others?”; “How much are ___ a danger to themselves?”  
+We will be getting Likert scale ratings from 1-7 from each participant in one of two conditions:  Black or White. We will convert the data from wide form to long form and organize by question type, condition, and age group. Then we will reverse code the following 4 question groups across conditions: “How well can ___ care for themselves?”; “How much are ___ a danger to others?”; “How much are ___ a danger to themselves?”  
 
 ####Load Relevant Libraries and Functions
 
@@ -87,6 +90,7 @@ GoffData = read.csv("../data/Pilot B Data_Edit .csv")
 
 #### Data exclusion / filtering
 
+We excluded participants who completed the survey in 200 seconds or less because we determined this was the fastest participants could complete the survey while reading the prompts. 
 
 #### Prepare data for analysis - create columns etc.
 
@@ -115,6 +119,8 @@ FinalGoff = GoffData %>%
 
 "Analyses compared the perceived innocence of children of different races for each age group and aggregated across age ranges. We compared the overall ratings of innocence between races by conducting independent samples t tests on the average score for each participant (using a Bonferroni correction for all t tests) meaning their general ratings of all target age ranges."  
 
+Because we did not power the analysis to correct for multiple comparisons, we are considering only the aggregate result rather than the individual age ranges. If the aggregate is not significant we will consider the main effect to not have replicated.
+
 ```{r}
 # This gives us the means by participant 
 SubIDGoffAgeMean = FinalGoff %>%
@@ -126,18 +132,31 @@ SubIDGoffAgeMean = FinalGoff %>%
   # What we want is the mean response.
   summarise(Agemean = (mean(Response)))
 
-# # Get sample means (commented out, we don't need this)
-# # In the end, we want 12 numbers
-# # For each condition, for each age range, we want one
-# # number that represents what particpants tend to 
-# # answer (regardless of question type)
-# GoffAgeMean = SubIDGoffAgeMean %>%
-#   group_by(Condition, Age) %>%
-#    summarise(Agemean = (mean(Agemean)))
+# Get sample means (commented out, we don't need this)
+# In the end, we want 12 numbers
+# For each condition, for each age range, we want one
+# number that represents what particpants tend to 
+# answer (regardless of question type)
 
 # Plot
+#This graph plots the individual age group differences by race condition  
 SubIDGoffAgeMean %>%
   ggplot(aes(x = Age, y = Agemean, fill = Condition)) + 
+  ylab("Rating") +
+  stat_summary(fun.y = mean, geom = "bar", position = "dodge") +
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar",
+               # This tells ggplot to separate the errorbars by one unit.
+               # We don't need to do this for the bars because the bars have
+               # nonzero width.
+               position = position_dodge(1), width = 0) +
+  theme_few() +
+  # scale_fill_brewer(type="qual", palette = 3)
+  scale_fill_grey()
+
+#This graph plots the total difference in rating across all age groups by race condition
+SubIDGoffAgeMean %>%
+  ggplot(aes(x = Condition, y = Agemean)) + 
+  ylab("Rating") +
   stat_summary(fun.y = mean, geom = "bar", position = "dodge") +
   stat_summary(fun.data = mean_cl_boot, geom = "errorbar",
                # This tells ggplot to separate the errorbars by one unit.
@@ -155,6 +174,7 @@ SubIDGoffAgeMean %>%
 # there are 7 hypotheses (6 age groups and the aggregate)
 # so instead of using a p-value threshold of alpha = 0.05,
 # we will instead use a threshold of (alpha / m) = (0.05 / 7)
+# We did not power sufficiently for this correction, and so will not be able to draw conclusions regarding significance. 
 corrected_alpha = .05/6
 
 #Aggregate t.test
@@ -198,7 +218,7 @@ SubIDGoffAgeMean %>%
        data = .)
 ```
 
-We want to check whether each p-value is less than `r corrected_alpha`.
+Ideally, we want to check whether each p-value is less than `r corrected_alpha`. However, because this replication was not sufficiently powered to do so, we are only looking to see whether the aggregate's p-value is less than .o5.
 
 *Side-by-side graph with original graph is ideal here*
 
