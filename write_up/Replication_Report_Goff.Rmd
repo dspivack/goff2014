@@ -90,7 +90,7 @@ GoffData = read.csv("../data/Pilot B Data_Edit .csv")
 
 #### Data exclusion / filtering
 
-We excluded participants who completed the survey in 200 seconds or less because we determined this was the fastest participants could complete the survey while reading the prompts. 
+We excluded participants who completed the survey in 200 seconds or less because we determined this was the fastest participants could complete the survey while reading the prompts. We also exluded participants whose responses had a standard deviation of 0. 
 
 #### Prepare data for analysis - create columns etc.
 
