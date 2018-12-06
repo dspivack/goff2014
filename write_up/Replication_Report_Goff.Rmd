@@ -104,6 +104,12 @@ FinalGoff = GoffData %>%
   mutate(Condition = str_extract(Question, "Black|White")) %>% 
   mutate(Age = str_extract(Question, "0.4|5.9|10.13|14.17|18.21|22.25")) %>%
    na.omit() %>%
+   group_by(SubID) %>%
+  mutate(SD = sd(Response)) %>% # create a column called SD which takes the SD of each participant's response
+  as.data.frame() %>% #reverts out of group_by 
+  filter(SD != 0) %>% # filter out participants with a standard deviation of 0 
+  mutate(Age = sub("\\.", "-", Age)) %>% # substitute "." with "-" in the Age category 
+  mutate(Age = factor(Age, levels = c("0-4", "5-9", "10-13", "14-17", "18-21", "22-25"))) %>% # change Age levels to the following characters 
   mutate(Response = as.numeric(Response)) %>%
    mutate(Response = ifelse(
      # is the question type in the reverse code list?
@@ -111,7 +117,7 @@ FinalGoff = GoffData %>%
      # if so, reverse code
      8-Response,
      # otherwise, keep it the same
-     Response))
+     Response)) 
  
 ```
 
@@ -132,7 +138,6 @@ SubIDGoffAgeMean = FinalGoff %>%
   # What we want is the mean response.
   summarise(Agemean = (mean(Response)))
 
-# Get sample means (commented out, we don't need this)
 # In the end, we want 12 numbers
 # For each condition, for each age range, we want one
 # number that represents what particpants tend to 
@@ -181,41 +186,15 @@ corrected_alpha = .05/6
 t.test(Agemean ~ Condition, 
        data = SubIDGoffAgeMean)   
 
-#0-4 t.test
+#Age specific t.tests
 SubIDGoffAgeMean %>%
-  filter(Age == "0.4") %>%
-  t.test(Agemean ~ Condition, 
-       data = .)  
-
-#5-9 t.test
-SubIDGoffAgeMean %>%
-  filter(Age == "5.9") %>%
-  t.test(Agemean ~ Condition, 
-       data = .) 
-
-#10-13 t.test
-SubIDGoffAgeMean %>%
-  filter(Age == "10.13") %>%
-  t.test(Agemean ~ Condition, 
-       data = .) 
-
-#"14-17" t.test
-SubIDGoffAgeMean %>%
-  filter(Age == "14.17") %>%
-  t.test(Agemean ~ Condition, 
-       data = .)
-
-#18-21 t.test
-SubIDGoffAgeMean %>%
-  filter(Age == "18.21") %>%
-  t.test(Agemean ~ Condition, 
-       data = .)
-
-#22-25 t.test
-SubIDGoffAgeMean %>%
-  filter(Age == "22.25") %>%
-  t.test(Agemean ~ Condition, 
-       data = .)
+  group_by(Age) %>% do(tidy(t.test(Agemean ~ Condition, data = .))) %>%
+  mutate(significant = p.value < corrected_alpha) %>%
+   rename(
+     meandiff = estimate,
+     blackmean = estimate1,
+     whitemean = estimate2,
+     )  
 ```
 
 Ideally, we want to check whether each p-value is less than `r corrected_alpha`. However, because this replication was not sufficiently powered to do so, we are only looking to see whether the aggregate's p-value is less than .o5.
