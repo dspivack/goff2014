@@ -14,10 +14,11 @@ output:
 
 ##Introduction
 
-In this paper, Gott et. al. test whether black children enjoy fewer of the basic human protections afforded to their non-black peers. In study 1, the authors asked participants about the innocence of children. Participants answered questions about how innocent children were in general (i.e., with-out specifying race) and how innocent White and Black children were.  
+In this paper, Goff et. al. test whether black children enjoy fewer of the basic human protections afforded to their non-black peers. In study 1, the authors asked participants about the innocence of children. Participants answered questions about how innocent children were in general (i.e., with-out specifying race) and how innocent white and black children were.  
 
 ##Methods
 
+This replication was preregistered at: https://osf.io/jyrm3/
 
 ###Power Analysis
 
@@ -41,37 +42,33 @@ Participants were prompted to respond to the set of seven questions for each of 
 "Participants were randomly assigned to one of three between-subjects conditions. They were asked to report the perceived innocence of White children, Black children, or children generally (i.e., without race specified). To avoid ceiling effects, where the youngest children (i.e., newborns and toddlers) might invariably be seen as innocent, each survey asked participants to rate individuals within six age subgroups, ranging from birth to young adulthood: 0–4, 5–9, 10–13, 14–17, 18–21, and 22–25. Ratings of innocence were measured with a novel scale and served as the dependent variable. Participants completed the seven-item innocence scale for each of the six age categories within their assigned racial group (White, Black, or race not specified)."
 
 Unlike the original study, this replication omits the race neutral category. 
-*See link for https://stanforduniversity.qualtrics.com/jfe/form/SV_doFDaWWu5KH8hal*
+*See  https://stanforduniversity.qualtrics.com/jfe/form/SV_doFDaWWu5KH8hal for the paradigm*
 
 ###Analysis Plan
 
 "Analyses compared the perceived innocence of children of different races for each age group and aggregated across age ranges. We compared the overall ratings of innocence between races by conducting independent samples t tests on the average score for each participant (using a Bonferroni correction for all t tests) meaning their general ratings of all target age ranges."  
 
-We did not power the analysis to correct for multiple comparisons. If the aggregate is not significant we will consider the main effect to not have replicated. 
-
 **Overall innocence ratings are compared between races by conducting independant t tests on the average score for each participant**
+
+We did not power the analysis to correct for multiple comparisons. If the aggregate is not significant we will consider the main effect to not have replicated. 
 
 ###Differences from Original Study
 
-This replication will use MTurk participants instead of university students. We are unsure as to whether this will have a large effect on the results. While the original study did not include exclusion criteria, we think it prudent to do so here as we are using MTurk participants instead of university students, and thus excluded participants who completed the study in under 200 seconds. Additionally, we are only comparing the black and white conditions, and have omitted the neutral condition. Lastly, we did not power the analysis to correct for multiple comparisons. If the aggregate is not significant we will consider the main effect to not have replicated. 
+This replication will use MTurk participants instead of university students. We are unsure as to whether this will have a large effect on the results. While the original study did not include exclusion criteria, we think it prudent to do so here as we are using MTurk participants instead of university students, and thus excluded participants who completed the study in under 200 seconds. We also excluded participants whose responses had a standard deviation of 0. Additionally, we are only comparing the black and white conditions, and have omitted the neutral condition. Lastly, we did not power the analysis to correct for multiple comparisons. If the aggregate is not significant we will consider the main effect to not have replicated. 
 
 ### Methods Addendum (Post Data Collection)
 
-You can comment this section out prior to final report with data collection.
 
 #### Actual Sample
-  The sample will be 50 MTurk participants who are from the USA and have over an 80% approval rating. 
+
+The sample consisted of 50 MTurk participants who are from the USA and have over an 80% approval rating. 18 of the participants were female and the mean age was 33.5.  19 participants completed the study in under 200 seconds and were excluded.  
 
 #### Differences from pre-data collection methods plan
 
 ##Results
 
 
-### Data preparation
-
-Data preparation following the analysis plan.
-	
-###Data Preparation
+### Data Preparation
 
 We will be getting Likert scale ratings from 1-7 from each participant in one of two conditions:  Black or White. We will convert the data from wide form to long form and organize by question type, condition, and age group. Then we will reverse code the following 4 question groups across conditions: “How well can ___ care for themselves?”; “How much are ___ a danger to others?”; “How much are ___ a danger to themselves?”  
 
@@ -80,17 +77,19 @@ We will be getting Likert scale ratings from 1-7 from each participant in one of
 ```{r include=F}
 library(tidyverse)
 library(ggthemes)
+library(broom)
+library(readxl)
 ```
 
 ####Import data
 
 ```{r}
-GoffData = read.csv("../data/Pilot B Data_Edit .csv")
+GoffData = read.csv("../data/Final Replication_Edit.csv")
 ```
 
 #### Data exclusion / filtering
 
-We excluded participants who completed the survey in 200 seconds or less because we determined this was the fastest participants could complete the survey while reading the prompts. We also exluded participants whose responses had a standard deviation of 0. 
+We excluded participants who completed the survey in 200 seconds or less because we determined this was the fastest participants could complete the survey while reading the prompts. We also excluded participants whose responses had a standard deviation of 0. 
 
 #### Prepare data for analysis - create columns etc.
 
@@ -199,18 +198,151 @@ SubIDGoffAgeMean %>%
 
 Ideally, we want to check whether each p-value is less than `r corrected_alpha`. However, because this replication was not sufficiently powered to do so, we are only looking to see whether the aggregate's p-value is less than .o5.
 
-*Side-by-side graph with original graph is ideal here*
+The original findings are summarized in the following graph: 
+```{r}
+Goff_OriginalFindings = read_excel("../data/Goff_OriginalFindings .xlsx")
+Goff_OriginalComposite = read_excel("../data/Goff_OriginalComposite.xlsx")
+```
+
+```{r}
+Goff_OriginalFindings %>%
+  mutate(Age = sub("\\.", "-", Age)) %>% # substitute "." with "-" in the Age category 
+  mutate(Age = factor(Age, levels = c("0-4", "5-9", "10-13", "14-17", "18-21", "22-25"))) %>% # change Age levels to the following characters 
+  ggplot(aes(x = Age, y = Rating, fill = Condition)) + 
+  ylab("Rating") +
+  stat_summary(fun.y = mean, geom = "bar", position = "dodge") +
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar",
+               # This tells ggplot to separate the errorbars by one unit.
+               # We don't need to do this for the bars because the bars have
+               # nonzero width.
+               position = position_dodge(1), width = 0) +
+  theme_few() +
+  # scale_fill_brewer(type="qual", palette = 3)
+  scale_fill_grey()
+
+
+Goff_OriginalComposite %>%
+  ggplot(aes(x = Condition, y = Rating)) + 
+  ylab("Rating") +
+  stat_summary(fun.y = mean, geom = "bar", position = "dodge") +
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar",
+               # This tells ggplot to separate the errorbars by one unit.
+               # We don't need to do this for the bars because the bars have
+               # nonzero width.
+               position = position_dodge(1), width = 0) +
+  theme_few() +
+  # scale_fill_brewer(type="qual", palette = 3)
+  scale_fill_grey()
+
+```
 
 ###Exploratory analyses
 
-Any follow-up analyses desired (not required).  
+Under a 150 second exclusion, we only had to exclude 7 participants. However, this more inclusive exclusion criteria did not effect the significance of the results.  
+
+```{r}
+qns_to_rev_code = c("care for themselves","danger to other", "danger to themselves")
+
+FinalGoff = GoffData %>%
+  gather(Question, Response, 3:86) %>%
+   filter(Duration > 150) %>% #filters out participants who spent less than 200 seconds on the task 
+  mutate(QuestionType = str_extract(Question, "protection|need.care|care.for.themselves|danger.to.others|danger.to.themselves|cute|innocent")) %>% 
+  mutate(Condition = str_extract(Question, "Black|White")) %>% 
+  mutate(Age = str_extract(Question, "0.4|5.9|10.13|14.17|18.21|22.25")) %>%
+   na.omit() %>%
+   group_by(SubID) %>%
+  mutate(SD = sd(Response)) %>% # create a column called SD which takes the SD of each participant's response
+  as.data.frame() %>% #reverts out of group_by 
+  filter(SD != 0) %>% # filter out participants with a standard deviation of 0 
+  mutate(Age = sub("\\.", "-", Age)) %>% # substitute "." with "-" in the Age category 
+  mutate(Age = factor(Age, levels = c("0-4", "5-9", "10-13", "14-17", "18-21", "22-25"))) %>% # change Age levels to the following characters 
+  mutate(Response = as.numeric(Response)) %>%
+   mutate(Response = ifelse(
+     # is the question type in the reverse code list?
+     QuestionType %in% qns_to_rev_code,
+     # if so, reverse code
+     8-Response,
+     # otherwise, keep it the same
+     Response)) 
+ 
+```
+
+```{r}
+# This gives us the means by participant 
+SubIDGoffAgeMean = FinalGoff %>%
+  # First we want 6*N numbers, 6 per participant
+  # If it's the individual, we don't need to group by
+  # condition, because this is a between Ss design.
+  # But we could, it wouldn't hurt.
+  group_by(SubID, Condition, Age) %>%
+  # What we want is the mean response.
+  summarise(Agemean = (mean(Response)))
+
+# In the end, we want 12 numbers
+# For each condition, for each age range, we want one
+# number that represents what particpants tend to 
+# answer (regardless of question type)
+
+# Plot
+#This graph plots the individual age group differences by race condition  
+SubIDGoffAgeMean %>%
+  ggplot(aes(x = Age, y = Agemean, fill = Condition)) + 
+  ylab("Rating") +
+  stat_summary(fun.y = mean, geom = "bar", position = "dodge") +
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar",
+               # This tells ggplot to separate the errorbars by one unit.
+               # We don't need to do this for the bars because the bars have
+               # nonzero width.
+               position = position_dodge(1), width = 0) +
+  theme_few() +
+  # scale_fill_brewer(type="qual", palette = 3)
+  scale_fill_grey()
+
+#This graph plots the total difference in rating across all age groups by race condition
+SubIDGoffAgeMean %>%
+  ggplot(aes(x = Condition, y = Agemean)) + 
+  ylab("Rating") +
+  stat_summary(fun.y = mean, geom = "bar", position = "dodge") +
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar",
+               # This tells ggplot to separate the errorbars by one unit.
+               # We don't need to do this for the bars because the bars have
+               # nonzero width.
+               position = position_dodge(1), width = 0) +
+  theme_few() +
+  # scale_fill_brewer(type="qual", palette = 3)
+  scale_fill_grey()
+
+# There are 7 t-test one for each age group.
+# Each t test compares exactly two sets of numbers.
+
+# Bonferroni Correction
+# there are 7 hypotheses (6 age groups and the aggregate)
+# so instead of using a p-value threshold of alpha = 0.05,
+# we will instead use a threshold of (alpha / m) = (0.05 / 7)
+# We did not power sufficiently for this correction, and so will not be able to draw conclusions regarding significance. 
+corrected_alpha = .05/6
+
+#Aggregate t.test
+t.test(Agemean ~ Condition, 
+       data = SubIDGoffAgeMean)   
+
+#Age specific t.tests
+SubIDGoffAgeMean %>%
+  group_by(Age) %>% do(tidy(t.test(Agemean ~ Condition, data = .))) %>%
+  mutate(significant = p.value < corrected_alpha) %>%
+   rename(
+     meandiff = estimate,
+     blackmean = estimate1,
+     whitemean = estimate2,
+     )  
+```
 
 ## Discussion
 
 ### Summary of Replication Attempt
 
-Open the discussion section with a paragraph summarizing the primary result from the confirmatory analysis and the assessment of whether it replicated, partially replicated, or failed to replicate the original result.  
+Under the 200 second exclusion paradigm, we excluded 19 participants which meant we were seriously under-powered, even for the aggregate comparison. Given that the replication was under-powered for both the aggregate and individual age groups analyses, we cannot draw conclusions about the replicability. The results obtained through the replication do not show a race difference in the ratings of children's innocence both in the aggregate and for individual age groups. Additionally, the different age groups mean innocence ratings did not decrease with age (i.e. participants did not rate children 0-4 as significantly more innocent than, for example, children 10-13), indicating that participants were not actively engaged during the study. 
 
 ### Commentary
 
-Add open-ended commentary (if any) reflecting (a) insights from follow-up exploratory analysis, (b) assessment of the meaning of the replication (or not) - e.g., for a failure to replicate, are the differences between original and present study ones that definitely, plausibly, or are unlikely to have been moderators of the result, and (c) discussion of any objections or challenges raised by the current and original authors about the replication attempt.  None of these need to be long.
+It is difficult to come to any conclusion about the replicability of this study given that it was under-powered. However it seems like this study design did not work well on MTurk. The study was repetitive and asking MTurkers to answer 42 questions that are very similar in nature when they are incentivized to finish the study quickly was not ideal. That the participants were not actively engaged in the study is definitely reflected in the lack of difference between the innocence ratings of older and younger age groups. Changing the exclusion criteria from 200 seconds to 150 seconds did not effect the results. Demand characteristics might have also influenced the results, as participants may have anticipated the study's purpose and modified their responses accordingly. I think it would be helpful to rerun an appropriately powered similar study with students and see if the original results replicated.   
